@@ -1,0 +1,37 @@
+version: 2
+
+# Weekly update PRs. cooldown skips releases younger than two weeks, so a
+# compromised release has time to be caught before it lands here. The label
+# satisfies the PR "labels" check; Dependabot PRs skip "issue" and
+# "branch-name".
+updates:
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 14
+    labels: [enhancement]
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        dependency-type: development
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 14
+    labels: [enhancement]
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 14
+    labels: [enhancement]
+    open-pull-requests-limit: 5

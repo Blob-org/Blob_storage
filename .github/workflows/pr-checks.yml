@@ -38,6 +38,8 @@ jobs:
 
   issue:
     name: issue
+    # Dependabot's update PRs have no issue to link.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -238,6 +238,17 @@ These run automatically as well:
 - **pre-push** (Husky): typecheck and tests.
 - **CI** (GitHub Actions, on pushes to `main` and on pull requests): Biome, typecheck and tests.
 
+**Security** (`.github/workflows/security.yml`, on every PR, on push to `main` and weekly):
+
+| Job | What it checks |
+| --- | --- |
+| `secrets (gitleaks)` | No secrets anywhere in the git history. |
+| `dependencies (bun audit)` | No known vulnerabilities of moderate severity or above in the dependencies. One dev-only advisory is ignored, with the reason given in the workflow. |
+| `codeql (…)` | Static analysis of the TypeScript and of the workflow files. Findings appear under the repo's **Security → Code scanning**. |
+| `image (trivy)` | Builds the Docker image and fails on HIGH or CRITICAL vulnerabilities that have a fix, or on secrets baked into the image. |
+
+Dependabot (`.github/dependabot.yml`) opens weekly update PRs for dependencies, the base image and the GitHub Actions. It skips releases younger than 14 days. Each release gets an SBOM (`sbom.cdx.json`, CycloneDX) listing everything in the image.
+
 ## PR rules
 
 Every pull request runs `.github/workflows/pr-checks.yml`, which has two checks:
