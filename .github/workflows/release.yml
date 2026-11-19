@@ -27,3 +27,31 @@ jobs:
           # Tags like v1.2.0-beta.1 become pre-releases.
           if [[ "$TAG" == *-* ]]; then flags+=(--prerelease); fi
           gh release create "$TAG" "${flags[@]}"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build the image
+        run: docker build -t app:release .
+
+      - name: Install Trivy
+        # The binary from the release, checked against a pinned hash, instead
+        # of a third-party action whose tags could be moved.
+        env:
+          VERSION: 0.76.1
+          SHA256: c7cbe3137fb8a48a17574bede3dd6beb16742d1e9772929940fc90082c39d9c0
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/trivy.tgz" \
+            "https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz"
+          echo "${SHA256}  $RUNNER_TEMP/trivy.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/trivy.tgz" -C "$RUNNER_TEMP/bin" trivy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Attach an SBOM to the release
+        # CycloneDX list of every OS package and dependency in the image.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          trivy image --no-progress --format cyclonedx --output sbom.cdx.json app:release
+          gh release upload "$TAG" sbom.cdx.json --repo "$GITHUB_REPOSITORY"
