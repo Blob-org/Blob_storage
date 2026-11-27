@@ -1,5 +1,5 @@
 # Local stack: blob_service + a local S3 server.
-# Needs auth_service's stack running first (cd ../auth_service && docker compose up),
+# Needs auth_service's stack running first (cd ../Blob_auth && docker compose up),
 # which creates the shared "blob-storage" network. See README "Run with Docker".
 name: blob-service
 
