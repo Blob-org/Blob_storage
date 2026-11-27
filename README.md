@@ -82,13 +82,13 @@ curl -OJ "$URL"
 Each repo has its own `compose.yaml`. auth_service's stack creates a shared Docker network called `blob-storage`, and this stack joins it, so start auth first:
 
 ```bash
-cd ../auth_service && docker compose up -d --build   # http://localhost:4000
+cd ../Blob_auth && docker compose up -d --build   # http://localhost:4000
 cd ../blob_service && docker compose up -d --build   # http://localhost:3000, S3Mock on :9090
 ```
 
 auth_service needs `AUTH_PRIVATE_KEY` in its `.env` (see its README). This stack needs no `.env`: the S3 settings are in `compose.yaml`.
 
-For the web app, also start [Blob_api_gateway](https://github.com/rades12340/Blob_api_gateway) and [Blob_frontend](https://github.com/rades12340/Blob_frontend), then open http://localhost:5173:
+For the web app, also start [Blob_api_gateway](https://github.com/Blob-org/Blob_api_gateway) and [Blob_frontend](https://github.com/Blob-org/Blob_frontend), then open http://localhost:5173:
 
 ```bash
 cd ../Blob_api_gateway && docker compose up -d --build   # :8080, routes /api/auth/* and /api/blob/*
@@ -264,7 +264,7 @@ To make the checks block merging, add `labels` and `issue` as required status ch
 Run the issue check locally:
 
 ```bash
-GITHUB_REPOSITORY=rades12340/Blob_storage GITHUB_TOKEN=$(gh auth token) \
+GITHUB_REPOSITORY=Blob-org/Blob_storage GITHUB_TOKEN=$(gh auth token) \
   PR_TITLE="..." PR_BODY="Closes #1" HEAD_REF=feat/x bun scripts/check-issue.ts
 ```
 
